@@ -1,9 +1,9 @@
+> Fork From https://github.com/jessezhang007007/echarts-ssr-server
+
+
 # Echarts 服务器端生成图片服务
 
-
-github地址：https://github.com/jessezhang007007/echarts-ssr-server
-
-Docker Hub 地址：https://hub.docker.com/r/jessezhang007007/echarts-ssr-server/
+github地址：https://github.com/jsdtxm/echarts-ssr-server
 
 
 ## 一、说明：
@@ -12,41 +12,30 @@ Echarts server side render by node canvas, generate chart image by Echarts.
 
 使用NodeJs服务器端渲染echarts图表，生成图片格式。
 
-## 二、安装
+## 二、运行
 
-### 方式一：使用Docker运行
+### 1. 构建image
 
 ```
-docker run -d -p 8081:8081 --name echarts-ssr-server --restart=always jessezhang007007/echarts-ssr-server
+docker build -t echarts-ssr-server:latest .
 ```
 
 
-### 方式二：本地Node运行
+#### 2. 准备字体
 
-#### 1. 安装依赖
+将准备好的中英文字体存放至fonts文件夹中，推荐字体：Dejavu、wqy
 
-操作系统 | 安装命令
------ | -----
-OS X | `brew install pkg-config cairo pango libpng jpeg giflib`
-Ubuntu | `sudo apt-get install libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++`
-Fedora | `sudo yum install cairo cairo-devel cairomm-devel libjpeg-turbo-devel pango pango-devel pangomm pangomm-devel giflib-devel`
-Solaris | `pkgin install cairo pango pkg-config xproto renderproto kbproto xextproto`
-Windows | [Instructions on our wiki](https://github.com/Automattic/node-canvas/wiki/Installation---Windows)
 
-#### 2. 下载并安装
+### 3. 启动container
 
-```bash
-git clone git@github.com:jessezhang007007/echarts-ssr-server.git
-cd echarts-ssr-server
-npm install
-npm start
+```
+docker run -it -p 8191:8191 -v `pwd`/fonts:/usr/share/fonts echarts-ssr-server:latest
 ```
 
 
 ## 三、访问服务
-### 1. 访问方式：使用http请求访问服务
 
-### 2. 请求参数格式：
+### 1. 请求参数格式：
 ```javascript
 {
     "width": 800,
@@ -94,19 +83,12 @@ npm start
 |height|Number|400|图片高度|
 |option|Object|{}|Echarts 的 Option 配置，参考Echarts文档|
 
-### 3. GET方式访问
 
-注意：GET方式只适合参数数据量小的情况，参数数据量大的时候请使用POST方式。
-
-```
-http://localhost:8081/?config=%7B%22width%22%3A800%2C%22height%22%3A500%2C%22option%22%3A%7B%22backgroundColor%22%3A%22%23fff%22%2C%22xAxis%22%3A%7B%22type%22%3A%22category%22%2C%22data%22%3A%5B%22Mon%22%2C%22Tue%22%2C%22Wed%22%2C%22Thu%22%2C%22Fri%22%2C%22Sat%22%2C%22Sun%22%5D%7D%2C%22yAxis%22%3A%7B%22type%22%3A%22value%22%7D%2C%22series%22%3A%5B%7B%22data%22%3A%5B820%2C932%2C901%2C934%2C1290%2C1330%2C1320%5D%2C%22type%22%3A%22line%22%7D%5D%7D%7D
-```
-
-### 4. POST方式访问
+### 2. POST方式访问
 
 ```
 curl -X POST \
-  http://localhost:8081/ \
+  http://127.0.0.1:8191/ \
   -o echart-image.png \
   -d '{
     "width": 800,
@@ -145,13 +127,3 @@ curl -X POST \
     }
 }'
 ```
-
-
-------
-广告
-------
-[超强接口管理工具：Apifox](https://www.apifox.cn/)
-
-[接口文档工具](https://www.apifox.cn/)
-
-[API文档工具](https://www.apifox.cn/)
