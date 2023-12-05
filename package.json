@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "node-echarts-canvas": "^1.2.2"
+    "json5": "^2.2.3",
+    "node-echarts-canvas": "^1.2.2",
+    "safe-eval": "^0.4.1"
   }
 }
