@@ -22,7 +22,9 @@ if (cluster.isMaster) {
     processConfig(request, response, function () {
       let config;
       try {
-        config = json5.parse(request.config, (_, value) => {
+        config = json5.parse(request.config, (key, value) => {
+          if(['z', 'zlevel'].includes(key))
+            return undefined;
           if (
             typeof value === "string" &&
             (value.includes("function") || value.includes("=>"))
@@ -64,7 +66,7 @@ function processConfig(request, response, callback) {
     return null;
   }
   const auth = request.headers["authorization"];
-  if (!auth || auth !== AUTHORIZATION) {
+  if (auth == null || auth !== AUTHORIZATION) {
     response.statusCode = 401;
     response.end("No authorization.");
     return;
