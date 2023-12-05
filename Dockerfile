@@ -12,10 +12,11 @@ RUN npm config set registry https://registry.npmmirror.com
 
 WORKDIR /app/
 
-ADD server.js /app/
 ADD package.json /app/
 
 RUN npm install -g pm2 && npm install --build-from-source canvas && npm install && npm cache clean --force
+
+ADD server.js /app/
 
 ####################################################################################################
 
