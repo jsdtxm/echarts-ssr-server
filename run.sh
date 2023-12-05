@@ -1,0 +1,1 @@
+docker run -it -p 8191:8191 -v `pwd`/fonts:/usr/share/fonts echarts-ssr-server
