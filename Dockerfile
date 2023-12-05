@@ -13,6 +13,7 @@ RUN npm config set registry https://registry.npmmirror.com
 WORKDIR /app/
 
 ADD package.json /app/
+ADD package-lock.json /app/
 
 RUN npm install -g pm2 && npm install --build-from-source canvas && npm install && npm cache clean --force
 
@@ -34,6 +35,9 @@ RUN npm install -g pm2 && npm cache clean --force
 
 WORKDIR /app/
 COPY --from=builder /app .
+
+ENV WORKER_PROCESSES 4
+ENV AUTHORIZATION qxinvest.com
 
 EXPOSE 8191
 
