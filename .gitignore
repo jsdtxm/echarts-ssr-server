@@ -1,3 +1,5 @@
+node_modules
+
 echart-image.png
 fonts/*
 !.gitkeep
