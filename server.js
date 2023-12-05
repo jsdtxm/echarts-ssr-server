@@ -1,5 +1,5 @@
 const http = require("http");
-const echarts = require("node-echarts-canvas");
+const echarts = require("echart5-canvars-ssr");
 const url = require("url");
 const os = require("os");
 const cluster = require("cluster");
