@@ -1,16 +1,17 @@
 const http = require("http");
-const echarts = require("node-echarts-canvas");
+const echarts = require("echart5-canvars-ssr");
 const url = require("url");
-const os = require("os");
 const cluster = require("cluster");
 const safeEval = require("safe-eval");
 const json5 = require("json5");
 
-const CPU_CORES_NUM = os.cpus().length;
+const WORKER_NUM = process.env.WORKER_PROCESSES || 4;
+
+const AUTHORIZATION = process.env.AUTHORIZATION || "";
 
 if (cluster.isMaster) {
   console.log(`Master ${process.pid} is running.`);
-  for (let i = 0; i < CPU_CORES_NUM; i++) {
+  for (let i = 0; i < WORKER_NUM; i++) {
     cluster.fork();
   }
   cluster.on("exit", (worker, code, signal) => {
@@ -32,12 +33,12 @@ if (cluster.isMaster) {
         });
       } catch (e) {
         response.statusCode = 400;
-        response.end('request parameter "config" format invalid, is not JSON');
+        response.end('request parameter "config" format invalid, is not JSON.');
         return;
       }
       if (!config || !config.option) {
         response.statusCode = 400;
-        response.end('request parameter "config" format invalid');
+        response.end('request parameter "config" format invalid.');
         return;
       }
       const buffer = echarts({
@@ -62,11 +63,17 @@ function processConfig(request, response, callback) {
   if (typeof callback !== "function") {
     return null;
   }
+  const auth = request.headers["authorization"];
+  if (!auth || auth !== AUTHORIZATION) {
+    response.statusCode = 401;
+    response.end("No authorization.");
+    return;
+  }
   if (request.method === "GET") {
     const arg = url.parse(request.url, true).query;
     if (!arg.config) {
       response.statusCode = 400;
-      response.end('request parameter "config" invalid');
+      response.end('request parameter "config" invalid.');
       return;
     }
     request.config = arg.config;
@@ -76,7 +83,7 @@ function processConfig(request, response, callback) {
       queryData += data;
       if (queryData.length > 1e6) {
         response.statusCode = 422;
-        response.end("request body too large");
+        response.end("request body too large.");
       }
     });
     request.on("end", function () {
