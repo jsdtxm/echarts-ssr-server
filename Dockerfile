@@ -1,16 +1,27 @@
-FROM ubuntu:18.04
-LABEL maintainer="jessezhang007007 <jessezhang007007@gmail.com>"
+FROM python:3.9-alpine3.17
 
-RUN apt-get update
-RUN apt-get install -y libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++  ttf-wqy-microhei ttf-wqy-zenhei xfonts-wqy xfonts-intl-chinese fonts-arphic-uming fonts-noto
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
-RUN apt-get install -y nodejs
-RUN npm install -g pm2
-WORKDIR /root/
-ADD server.js /root/
-ADD package.json /root/
-RUN npm install
+LABEL maintainer="Xia Min <jsdtxm@gmail.com>"
 
-EXPOSE 8081
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+RUN apk add --no-cache -U tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+RUN apk add --no-cache git nodejs npm icu-data-full
+
+RUN npm config set registry https://registry.npmmirror.com
+
+WORKDIR /app/
+
+ADD server.js /app/
+ADD package.json /app/
+
+RUN apk add --no-cache pkgconfig pixman-dev cairo-dev pango-dev g++ make
+
+RUN npm install -g pm2 && npm install --build-from-source canvas && npm install && npm cache clean --force
+
+RUN apk add --no-cache fontconfig ttf-dejavu
+COPY ./simhei.ttf /usr/share/fonts/simhei.ttf
+COPY ./simsun.ttc /usr/share/fonts/simsun.ttc
+
+EXPOSE 8191
 
 CMD ["pm2-docker", "start", "server.js"]
