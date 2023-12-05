@@ -21,7 +21,7 @@ docker build -t echarts-ssr-server:latest .
 ```
 
 
-#### 2. 准备字体
+### 2. 准备字体
 
 将准备好的中英文字体存放至fonts文件夹中，推荐字体：Dejavu、wqy
 
